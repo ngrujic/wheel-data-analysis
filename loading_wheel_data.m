@@ -1,7 +1,7 @@
 %% Analyzing wheel detection task data
 %% Localizing the data directories
-code_path = 'C:\Users\ngrujic\Documents\Behaviour';
-data_path = 'C:\Users\ngrujic\Documents\Behaviour\wheeeeldata'; % folder with all of the M### mouse folders
+code_path = 'C:\Users\ngrujic\Documents\Github\wheel-data-analysis';
+data_path = 'P:\Nik\Wheel setup\data\wheel data\detection\setups124'; % folder with all of the M### mouse folders
 cd(data_path)
 mouse_dir = dir(data_path);
 mouse_dir = mouse_dir(3:end); % here are all of the mouse folders we want to access them one by one
@@ -59,39 +59,40 @@ for mouse_ind = 1:length(mouse_dir)
                         day_trials{flag,2} = day_dir(day_ind).name;
                         %                         clear trials_session
                     end
-                end
-            elseif isfield(block,'events') && isfield(block.events, 'feedbackValues')
-                
-                if size(block.paramsValues,2)>20
-                    trials_session = [];
-                    for trial_ind = 1:size(block.events.feedbackValues,2)
-                        % gotta loop through trials
-                        trials_session(trial_ind,1) = block.paramsValues(trial_ind).stimulusOrientation;
-                        trials_session(trial_ind,2) = block.events.repeatNumValues(trial_ind);
-                        trials_session(trial_ind,3) = find(block.paramsValues(trial_ind).stimulusContrast==1);
-                        trials_session(trial_ind,4) = double(block.events.feedbackValues(trial_ind));                        
-                        
-                    end
-                    flag = flag+1;
                     
-                    day_trials{flag,1} = trials_session;
-                    day_trials{flag,2} = day_dir(day_ind).name;
-                    %                         clear trials_session
+                elseif isfield(block,'events') && isfield(block.events, 'feedbackValues')
+                    
+                    if size(block.paramsValues,2)>20
+                        trials_session = [];
+                        for trial_ind = 1:size(block.events.feedbackValues,2)
+                            % gotta loop through trials
+                            trials_session(trial_ind,1) = block.paramsValues(trial_ind).stimulusOrientation;
+                            trials_session(trial_ind,2) = block.events.repeatNumValues(trial_ind);
+                            trials_session(trial_ind,3) = find(block.paramsValues(trial_ind).stimulusContrast==1);
+                            trials_session(trial_ind,4) = double(block.events.feedbackValues(trial_ind));
+                            
+                        end
+                        flag = flag+1;
+                        
+                        day_trials{flag,1} = trials_session;
+                        day_trials{flag,2} = day_dir(day_ind).name;
+                        %                         clear trials_session
+                    end
                 end
+                
             end
-            
+            if exist('day_trials')
+                mouse_trials{day_ind} = day_trials;
+                %             clear day_trials
+            end
         end
-        if exist('day_trials')
-            mouse_trials{day_ind} = day_trials;
-            %             clear day_trials
+        if exist('mouse_trials')
+            data_trials{mouse_ind,1} = mouse_trials; % the final matrix with all beh data
+            data_trials{mouse_ind,2} = mouse_dir(mouse_ind).name;
+            %         clear mouse_trials
         end
-    end
-    if exist('mouse_trials')
-        data_trials{mouse_ind,1} = mouse_trials; % the final matrix with all beh data
-        data_trials{mouse_ind,2} = mouse_dir(mouse_ind).name;
-        %         clear mouse_trials
     end
 end
-%% Save
-cd(code_path)
-save data_trials data_trials
+    %% Save
+    cd(code_path)
+    save data_trials data_trials
