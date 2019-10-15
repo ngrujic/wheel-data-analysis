@@ -14,7 +14,7 @@ Analysing multiple mice on the wheel detection and discrimination tasks
 4. The final data structure is a cell array, saved in the mouse data folder called allmaus_dat.
 Each cell is a mouse - inside the cell columns are as follows:
 
-1. Day success average \ 2. Date \ 3. Mouse \ 4. Experiment Type \ 5. Experiment trials data
+1. Day success average (no repeats inc.) \ 2. Date \ 3. Mouse \ 4. Experiment Type \ 5. Experiment trials data
 
 The experiment trials data columns are as follows in Detection Experiment type:
 1. Orientation \ 2. Number of trial repetition \ 3. RT \ 4. Success? \ 5. Correct side \ 6. Left Side Contrast \ 7. Right Side Contrast
