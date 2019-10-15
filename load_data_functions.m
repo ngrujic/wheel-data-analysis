@@ -1,7 +1,7 @@
 %% Localizing the data directories
-code_path = 'C:\Users\ngrujic\Documents\Github\wheel-data-analysis';
-data_path = 'P:\Nik\Wheel setup\data\wheel data'; % folder with all of the M### mouse folders
+data_path = uigetdir; % folder with all of the M### mouse folders
 cd(data_path)
+save data_path data_path
 mouse_dir = dir(data_path);
 mouse_dir = mouse_dir(3:end); % here are all of the mouse folders we want to access them one by one
 
@@ -42,3 +42,4 @@ for mouse_ind = 1:length(mouse_dir)
         end
     end
 end
+cd(data_path)
