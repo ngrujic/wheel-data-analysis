@@ -4,6 +4,7 @@ cd(data_path)
 save data_path data_path
 mouse_dir = dir(data_path);
 mouse_dir = mouse_dir(3:end); % here are all of the mouse folders we want to access them one by one
+mouse_dir = mouse_dir([mouse_dir.isdir].');
 
 for mouse_ind = 1:length(mouse_dir)
     cd([mouse_dir(mouse_ind).folder,'\',mouse_dir(mouse_ind).name])
@@ -33,11 +34,13 @@ for mouse_ind = 1:length(mouse_dir)
                     
                 else delete = 1;
                 end
+
                 if delete == 1;
                     cd(session_dir(session_ind).folder);
                     rmdir([session_dir(session_ind).folder,'\',session_dir(session_ind).name], 's');
                     session_ind = session_ind-1;
                 end
+
             end
         end
     end

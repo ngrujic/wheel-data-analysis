@@ -1,9 +1,10 @@
 %% Localizing the data directories
 clear all;close all
-data_path = load('data_path.mat'); % folder with all of the M### mouse folders
-cd(data_path)
+load('data_path.mat')
+data_path = data_path.data_path;
 mouse_dir = dir(data_path);
 mouse_dir = mouse_dir(3:end); % here are all of the mouse folders we want to access them one by one
+mouse_dir = mouse_dir([mouse_dir.isdir].');
 
 for mouse_ind = 1:length(mouse_dir)
     cd([mouse_dir(mouse_ind).folder,'\',mouse_dir(mouse_ind).name])
@@ -19,13 +20,17 @@ for mouse_ind = 1:length(mouse_dir)
             
             
             load(processed_file.name)
-            flag = flag+1;
-            temp{flag,1} = mean(double(mouse_data(4,:)==1));
-            temp{flag,2} = day;
-            temp{flag,3} = mouse;
-            temp{flag,4} = exptype;
-            temp{flag,5} = mouse_data;
             
+            flag = flag+1;
+            if strcmp(exptype, 'discrimination')
+                temp{flag,1} = mean(mouse_data(find(mouse_data(:,3)==1),5));
+            else
+                temp{flag,1} = mean(mouse_data(find(mouse_data(:,2)==1),4));
+            end
+                temp{flag,2} = day;
+                temp{flag,3} = mouse;
+                temp{flag,4} = exptype;
+                temp{flag,5} = mouse_data;
             
             
         end
