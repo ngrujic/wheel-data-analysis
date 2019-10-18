@@ -1,7 +1,7 @@
 %% Localizing the data directories
 clear all;close all
 load('data_path.mat')
-data_path = data_path.data_path;
+data_path = data_path;
 mouse_dir = dir(data_path);
 mouse_dir = mouse_dir(3:end); % here are all of the mouse folders we want to access them one by one
 mouse_dir = mouse_dir([mouse_dir.isdir].');

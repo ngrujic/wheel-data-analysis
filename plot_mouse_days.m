@@ -2,16 +2,22 @@
 clear all;close all
 load allmaus_dat
 orientations = 0:20:180;
-remove_number = 13;
+% remove_number = [];
 %% remove repeated trials
-maus_dat(remove_number) = [];
+% maus_dat(remove_number) = [];
+all_mice_dat = cell(1,length(maus_dat));
 for mouse_ind = 1: length(maus_dat)
     for day_ind = 1:length(maus_dat{mouse_ind})
+        
+        %
+        %         mausday = maus_dat{mouse_ind}{day_ind,5};
+        %         all_mice_dat{mouse_ind} = [all_mice_dat{mouse_ind}; mausday];
         
         if strcmp(maus_dat{mouse_ind}{day_ind,4}(1:9),'detection')
             badind = maus_dat{mouse_ind}{day_ind,5}(:,2) > 1 ;
             maus_dat{mouse_ind}{day_ind,5}(badind,:) = [] ;
-            
+            mausday = maus_dat{mouse_ind}{day_ind,5};
+            all_mice_dat{mouse_ind} = [all_mice_dat{mouse_ind}; mausday];
         else
             badind = maus_dat{mouse_ind}{day_ind,5}(:,2) > 1 ;
             maus_dat{mouse_ind}{day_ind,5}(badind,:) = [] ;
@@ -33,34 +39,22 @@ for mouse_ind = 1: length(maus_dat)
         else
             RTs(day_ind-dayz) = mean(maus_dat{mouse_ind}{day_ind,5}(:,4));
         end
-        % orientation business
-        for orient_ind = 1:length(orientations)-1
-            %             keyboard
-            
-            if strcmp(maus_dat{mouse_ind}{day_ind,4}(1:9),'detection')
-                daymaus_orient = find(daymaus(:,1) >orientations(orient_ind) & daymaus(:,1) <orientations(orient_ind+1));
-                daymaus_or_means(orient_ind) = mean(daymaus(daymaus_orient,4));
-                %                 daymaus_or_means_upper(orient_ind,:) = mean(daymaus(daymaus_orient,4))+std(daymaus(daymaus_orient,4));
-                %                 daymaus_or_means_upper(orient_ind,:) = mean(daymaus(daymaus_orient,4))+std(daymaus(daymaus_orient,4));
-                RTs_or_means(orient_ind) = mean(daymaus(daymaus_orient,3));
-                 n_trials_ors(day_ind-dayz,orient_ind) = length(daymaus_orient);
-            else
-                RTs_or_means(orient_ind)  = NaN;
-                daymaus_or_means(orient_ind) = NaN;
-                n_trials_ors(day_ind-dayz,orient_ind) = NaN;
-            end
-        end
-        maus_or_means(day_ind-dayz,:) = daymaus_or_means;
-        maus_orRT_means(day_ind-dayz,:) = RTs_or_means;
-        clear daymaus_or_means RTs_or_means
     end
-    %     keyboard
-    mean_maus_or = nanmean(maus_or_means,1);
-    %     mean_maus_or_2SD(1,:) = mean_maus_or + 2.* nanstd(maus_or_means,[],1);
-    %     mean_maus_or_2SD(2,:) = mean_maus_or - 2.* nanstd(maus_or_means,[],1);
-    sum_n_trials_ors = sum(n_trials_ors,1);
-    mean_maus_orRT = nanmean(maus_orRT_means,1);
-    clear maus_or_means
+    % orientation business HAS TO BE SPECIAL
+    for orient_ind = 1:length(orientations)-1
+        
+        daymaus_orient = find(all_mice_dat{mouse_ind}(:,1) >orientations(orient_ind)...
+            & all_mice_dat{mouse_ind}(:,1) <orientations(orient_ind+1));
+        maus_or_means(orient_ind) =  mean(all_mice_dat{mouse_ind}(daymaus_orient,4));
+        RTs_or_means(orient_ind) = mean(all_mice_dat{mouse_ind}(daymaus_orient,3));
+        
+        maus_or_STDs(orient_ind) = std(all_mice_dat{mouse_ind}(daymaus_orient,4),[],'all');
+        RTs_or_STDs(orient_ind) =  std(all_mice_dat{mouse_ind}(daymaus_orient,3));
+
+        n_trials_ors(orient_ind) = length(daymaus_orient);
+        
+    end
+    
     
     figure; subplot(4,1,1)
     yyaxis left
@@ -74,7 +68,6 @@ for mouse_ind = 1: length(maus_dat)
     subplot(4,1,2)
     yyaxis left
     plot(1:length(current_maus_means),current_maus_means,'bx:'); lsline
-    title(maus_dat{mouse_ind}{end,3})
     ylim([0,1]); ylabel('Percent Success')
     hold on;    yyaxis right
     plot(1:length(RTs),RTs,'rx:'); lsline
@@ -84,21 +77,31 @@ for mouse_ind = 1: length(maus_dat)
     
     subplot(4,1,3)
     yyaxis left
-    bar((1:length(mean_maus_or))+0.2,mean_maus_or,0.3)
+    bar((1:length(maus_or_means))+0.2,maus_or_means,0.3)
     ylim([0 1]); ylabel('Percent Success')
+    hold on
+    er = errorbar((1:length(maus_or_means))+0.2,maus_or_means,maus_or_STDs*2);
+    er.Color = [0 0 0];
+    er.LineStyle = 'none';
+    
     yyaxis right
-    xlim([0.1 length(mean_maus_orRT)+0.9])
+    xlim([0.1 length(RTs_or_means)+0.9])
     %     keyboard
-    bar((1:length(mean_maus_orRT)) - 0.2, mean_maus_orRT,0.18)
+    bar((1:length(RTs_or_means)) - 0.2, RTs_or_means,0.18)
     xticklabels({'0-10','20-30','40-50','60-70','80-90','100-110','120-130','140-150','160-170'})
     ylabel('RT (s)'); ylim([0 20])
-    xlim([0.1 length(mean_maus_orRT)+0.9])
+    xlim([0.1 length(RTs_or_means)+0.9])
+    hold on
+    er = errorbar((1:length(RTs_or_means)) - 0.2, RTs_or_means,RTs_or_STDs);
+    er.Color = [0 0 0];
+    er.LineStyle = 'none';
     
-      subplot(4,1,4)
-    bar((1:length(sum_n_trials_ors)), sum_n_trials_ors)
+    
+    subplot(4,1,4)
+    bar((1:length(n_trials_ors)), n_trials_ors)
     xticklabels({'0-10','20-30','40-50','60-70','80-90','100-110','120-130','140-150','160-170'})
-    ylabel('Number of trials'); 
+    ylabel('Number of trials');
     
-    clear n_trials mean_maus_or mean_maus_orRT RTs n_trials_ors
+    clear   n_trials  n_trials_ors  maus_or_means RTs_or_means RTs_or_STDs maus_or_STDs  RTs
 end
 
