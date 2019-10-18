@@ -27,6 +27,7 @@ end
 %% mouse loop
 close all
 dayz = 1;
+from_trial = 1000;
 for mouse_ind = 1: length(maus_dat)
     current_maus_means = [maus_dat{mouse_ind}{dayz+1:end,1}].';
     for day_ind = dayz+1:length(maus_dat{mouse_ind})
@@ -43,13 +44,13 @@ for mouse_ind = 1: length(maus_dat)
     % orientation business HAS TO BE SPECIAL
     for orient_ind = 1:length(orientations)-1
         
-        daymaus_orient = find(all_mice_dat{mouse_ind}(:,1) >orientations(orient_ind)...
-            & all_mice_dat{mouse_ind}(:,1) <orientations(orient_ind+1));
-        maus_or_means(orient_ind) =  mean(all_mice_dat{mouse_ind}(daymaus_orient,4));
-        RTs_or_means(orient_ind) = mean(all_mice_dat{mouse_ind}(daymaus_orient,3));
+        daymaus_orient = find(all_mice_dat{mouse_ind}(from_trial+1:end,1) >orientations(orient_ind)...
+            & all_mice_dat{mouse_ind}(from_trial+1:end,1) <orientations(orient_ind+1));
+        maus_or_means(orient_ind) =  mean(all_mice_dat{mouse_ind}(daymaus_orient+from_trial,4));
+        RTs_or_means(orient_ind) = mean(all_mice_dat{mouse_ind}(daymaus_orient+from_trial,3));
         
-        maus_or_STDs(orient_ind) = std(all_mice_dat{mouse_ind}(daymaus_orient,4),[],'all');
-        RTs_or_STDs(orient_ind) =  std(all_mice_dat{mouse_ind}(daymaus_orient,3));
+        maus_or_STDs(orient_ind) = std(all_mice_dat{mouse_ind}(daymaus_orient+from_trial,4),[],'all');
+        RTs_or_STDs(orient_ind) =  std(all_mice_dat{mouse_ind}(daymaus_orient+from_trial,3));
 
         n_trials_ors(orient_ind) = length(daymaus_orient);
         
