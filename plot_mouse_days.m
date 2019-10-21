@@ -57,7 +57,7 @@ for mouse_ind = 1: length(maus_dat)
     end
     
     
-    figure; subplot(4,1,1)
+    aa= figure; subplot(4,1,1)
     yyaxis left
     plot(1:length(current_maus_means),current_maus_means,'bx:'); lsline
     title(maus_dat{mouse_ind}{end,3})
@@ -81,9 +81,9 @@ for mouse_ind = 1: length(maus_dat)
     bar((1:length(maus_or_means))+0.2,maus_or_means,0.3)
     ylim([0 1]); ylabel('Percent Success')
     hold on
-    er = errorbar((1:length(maus_or_means))+0.2,maus_or_means,maus_or_STDs*2);
-    er.Color = [0 0 0];
-    er.LineStyle = 'none';
+%     er = errorbar((1:length(maus_or_means))+0.2,maus_or_means,maus_or_STDs*2);
+%     er.Color = [0 0 0];
+%     er.LineStyle = 'none';
     
     yyaxis right
     xlim([0.1 length(RTs_or_means)+0.9])
@@ -104,5 +104,8 @@ for mouse_ind = 1: length(maus_dat)
     ylabel('Number of trials');
     
     clear   n_trials  n_trials_ors  maus_or_means RTs_or_means RTs_or_STDs maus_or_STDs  RTs
+saveas(aa,maus_dat{mouse_ind}{end,3},'bmp')
+
+
 end
 
