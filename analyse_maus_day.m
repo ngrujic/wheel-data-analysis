@@ -14,7 +14,7 @@ if length(block.trial) > 20
         repeatnums(trial_ind,1) = block.trial(trial_ind).condition.repeatNum;
         reaction_time(trial_ind,1) = block.trial(trial_ind).responseMadeTime - block.trial(trial_ind).interactiveStartedTime;
         feedback(trial_ind,1) = double(block.trial(trial_ind).feedbackType ==1);
-        correct_side(trial_ind,1) = find(block.trial(trial_ind).condition.visCueContrast ==1);
+       [aaa, correct_side(trial_ind,1)] = max(block.trial(trial_ind).condition.visCueContrast);
         contrasts(trial_ind,:) = block.trial(trial_ind).condition.visCueContrast;
     end
     
