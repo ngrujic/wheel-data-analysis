@@ -14,8 +14,8 @@ for mouse_ind = 1: length(maus_dat)
         %         all_mice_dat{mouse_ind} = [all_mice_dat{mouse_ind}; mausday];
         
         if strcmp(maus_dat{mouse_ind}{day_ind,4}(1:9),'detection')
-            badind = maus_dat{mouse_ind}{day_ind,5}(:,2) > 1 ;
-            maus_dat{mouse_ind}{day_ind,5}(badind,:) = [] ;
+%             badind = maus_dat{mouse_ind}{day_ind,5}(:,2) > 1 ;
+%             maus_dat{mouse_ind}{day_ind,5}(badind,:) = [] ;
             mausday = maus_dat{mouse_ind}{day_ind,5};
             all_mice_dat{mouse_ind} = [all_mice_dat{mouse_ind}; mausday];
         else
@@ -26,8 +26,8 @@ for mouse_ind = 1: length(maus_dat)
 end
 %% mouse loop
 close all
-dayz = 1;
-from_trial = 1000;
+dayz = 5;
+from_trial = 0;
 for mouse_ind = 1: length(maus_dat)
     current_maus_means = [maus_dat{mouse_ind}{dayz+1:end,1}].';
     for day_ind = dayz+1:length(maus_dat{mouse_ind})
@@ -55,7 +55,6 @@ for mouse_ind = 1: length(maus_dat)
         n_trials_ors(orient_ind) = length(daymaus_orient);
         
     end
-    
     
     aa= figure; subplot(4,1,1)
     yyaxis left
@@ -103,9 +102,36 @@ for mouse_ind = 1: length(maus_dat)
     xticklabels({'0-10','20-30','40-50','60-70','80-90','100-110','120-130','140-150','160-170'})
     ylabel('Number of trials');
     
+    all_mice_means(mouse_ind,:) = maus_or_means;
+     all_mice_RTs(mouse_ind,:) = RTs_or_means;
+     
+    
+     
     clear   n_trials  n_trials_ors  maus_or_means RTs_or_means RTs_or_STDs maus_or_STDs  RTs
 saveas(aa,maus_dat{mouse_ind}{end,3},'bmp')
 
 
 end
 
+figure
+    yyaxis left
+    bar((1:length(mean(all_mice_means,1)))+0.2,mean(all_mice_means,1),0.3)
+    ylim([0 1]); ylabel('Percent Success')
+    hold on
+    
+      yyaxis right
+    xlim([0.1 length(mean(all_mice_RTs,1))+0.9])
+    %     keyboard
+    bar((1:length(mean(all_mice_RTs,1))) - 0.2, mean(all_mice_RTs,1),0.18)
+    xticklabels({'0-10','20-30','40-50','60-70','80-90','100-110','120-130','140-150','160-170'})
+    ylabel('RT (s)'); ylim([0 20])
+    xlim([0.1 length(mean(all_mice_RTs,1))+0.9])
+   
+    
+    
+    
+    
+    
+    
+    
+    
