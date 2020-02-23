@@ -28,8 +28,8 @@ for mousInd = 1:length(mice)
         
         try
             % find exp day
-            dayExp(dayInd) = dir(['wheel*',tempDate,'*.mat']);
-            load(dayExp(dayInd).name)
+            dayExp{dayInd} = dir(['wheel*',tempDate,'*.mat'])
+            load(dayExp.name)
             
             % FILTERING THE DAY - eg if >60% total include in the analysis
             if perccorr >= 60
@@ -45,7 +45,7 @@ for mousInd = 1:length(mice)
     % saving in big cell and normal array mouseMat is everything combined
     allMiceData{mousInd,1} = mouseData;
     allMiceData{mousInd,2} = num2str(mice(mousInd));
-    allMiceData{mousInd,3} = dayExp;
+    allMiceData{mousInd,3} = num2str(mice(mousInd));
 
     mouseMat = [mouseMat; mouseData];
     clear dayExp

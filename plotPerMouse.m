@@ -19,10 +19,11 @@ for mouseInd = 1:length(allMiceData)
     
     % loop for all orientation appearances
     for orInd = 1:length(uniqueOrients)
-        
+        % conditions for trial inclusion
        [orientTrialInd, y] = find(currMouse(:,end-1:end) == uniqueOrients(orInd)...
            & abs(abs(currMouse(:,end-1))-abs(currMouse(:,end)))==30 ...
-          & currMouse(:,5) == 0);
+          & (currMouse(:,5) == 0 | currMouse(:,6) ==0));
+      
         percorrOrient(orInd) = sum(currMouse(orientTrialInd,2))/length(orientTrialInd);
         nTrialsOr(orInd) = length(orientTrialInd);
         
