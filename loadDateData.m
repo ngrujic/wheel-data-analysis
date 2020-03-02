@@ -32,7 +32,7 @@ for mousInd = 1:length(mice)
             load(dayExp(dayInd).name)
             
             % FILTERING THE DAY - eg if >60% total include in the analysis
-            if perccorr >= 60
+            if perccorr >= 55
                 i= i+1;
                 mouseData = [ mouseData; [repmat(i,length(correct),1), double(correct)' RT' correctResponse(1:length(correct))' repmat(repeatIncorrect,length(correct),1) trialRepeated(1:length(correct))'...
                     recentPercent'  orientationL(1:length(correct))' orientationR(1:length(correct))']];
