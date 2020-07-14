@@ -2,32 +2,49 @@
 close all;
 allMiceCorrOr =[];
 allMiceCorrNTrials = [];
+
 for mouseInd = 1:length(allMiceData)
     
     currMouse = allMiceData{mouseInd,1};
-%     currMouse = mouseMat;
-
+    %     currMouse = mouseMat;
+    
     % filtering by RT < 3 included
     currMouse(currMouse(:,3) > 3,:) = [];
     
+    % filter by condition
+    currMouse(currMouse(:,8) == 1,:) = [];
+    
     % if we want to filter by correct trial turns -1(leftcorrect) to 0 and
     % 1 to 2 for future indexing
-    currMouse(currMouse(:,4) == 1,4) = 0;
-    currMouse(:,4)= currMouse(:,4) +2;
+    %     currMouse(currMouse(:,4) == 1,4) = 0;
+    %     currMouse(:,4)= currMouse(:,4) +2;
     
     % each Orientation
     uniqueOrients = unique(currMouse(:,end-1:end));
     uniqueOrients = uniqueOrients(1:end-1);
-    % loop for all orientation appearances
-    for orInd = 1:length(uniqueOrients)
-        % conditions for trial inclusion
-        [orientTrialInd, y] = find(currMouse(:,end-1:end) == uniqueOrients(orInd)...
-...%      & abs(abs(currMouse(:,end-1))-abs(currMouse(:,end)))==30 ...
-            & (currMouse(:,5) == 0 | currMouse(:,6) ==0));
+    
+    % make 11th column of mice the difference between orientations
+    % (difficulty)
+    currMouse(:,11) = abs(abs(currMouse(:,9))-abs(currMouse(:,10)));
+    
+    uniqueIncrements =  unique(currMouse(:,end));
+    
+    
+    % find different increments and loop
+    for incrementInd = 1:length(uniqueIncrements)
         
-        percorrOrient(orInd) = sum(currMouse(orientTrialInd,2))/length(orientTrialInd);
-        nTrialsOr(orInd) = length(orientTrialInd);
-        
+        % loop for all orientation appearances
+        for orInd = 1:length(uniqueOrients)
+            
+            % conditions for trial inclusion
+            [orientTrialInd, y] = find(currMouse(:,9:10) == uniqueOrients(orInd)...
+                & currMouse(:,end) == uniqueIncrements(incrementInd) ...
+                &  currMouse(:,6) ==0);
+            
+            percorrOrient(orInd,incrementInd) = sum(currMouse(orientTrialInd,2))/length(orientTrialInd);
+            nTrialsOr(orInd,incrementInd) = length(orientTrialInd);
+            
+        end
     end
     
     figure(1)
@@ -44,9 +61,12 @@ for mouseInd = 1:length(allMiceData)
     ylabel('N Trials')
     bar( 1.125:length(nTrialsOr)+0.125,nTrialsOr,0.25)
     
-    
-    
-    %% looking at only the correct orient appearance
+end
+
+
+%% looking at only the correct orient appearance
+
+for mouseInd = 1:length(allMiceData)
     % make corr orient matrix;
     corrOrient = zeros(length(currMouse),1);
     corrOrient(currMouse(:,4) == 1,1) = currMouse(currMouse(:,4) == 1,end-1); %left
@@ -56,7 +76,7 @@ for mouseInd = 1:length(allMiceData)
     for orInd = 1:length(unCorrOr)
         
         [orientTrialInd, y] = find(corrOrient == unCorrOr(orInd)...
-...%       & abs(abs(currMouse(:,end-1))-abs(currMouse(:,end))) ==30 ...
+            ...%       & abs(abs(currMouse(:,end-1))-abs(currMouse(:,end))) ==30 ...
             & (currMouse(:,5) == 0| currMouse(:,6) ==0));
         
         perOnlyCorrOrient(orInd) = sum(currMouse(orientTrialInd,2))/length(orientTrialInd);
@@ -85,10 +105,10 @@ for mouseInd = 1:length(allMiceData)
     
     allMiceCorrOr = [allMiceCorrOr; perOnlyCorrOrient];
     allMiceCorrNTrials = [allMiceCorrNTrials; nTrialsCorrOr];
-
-%     [RHO,PVAL] = corrcoef(nTrialsCorrOr,perOnlyCorrOrient);
-%     rVal(mouseInd) = RHO(1,2);
-%     pVal(mouseInd) = PVAL(1,2);
+    
+    %     [RHO,PVAL] = corrcoef(nTrialsCorrOr,perOnlyCorrOrient);
+    %     rVal(mouseInd) = RHO(1,2);
+    %     pVal(mouseInd) = PVAL(1,2);
     
 end
 %   legend(allMiceData{:,2})
