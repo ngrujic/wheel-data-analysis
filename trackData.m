@@ -1,7 +1,7 @@
 
 clear all; close all
 
-M = readmatrix('123-03232020165650-0000DLC_resnet50_All_Eyez_On_MeMar23shuffle1_1030000');
+M = csvread('222-07202020143735.csv',3,0);
 
 % eyes x and y positions
 
