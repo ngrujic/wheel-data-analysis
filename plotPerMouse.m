@@ -5,6 +5,8 @@ allMiceCorrNTrials = [];
 
 miceTogether = 1;
 incTrialIncrements =60; % to include all increments set to 90 to include just 30 set to 30
+miceTogether = 0;
+incTrialIncrements = 20; % to include all increments set to 90 to include just 30 set to 30
 
 if miceTogether ==1
     NInd = 1;
@@ -35,6 +37,7 @@ for mouseInd = 1:NInd
     %% each Orientation
     uniqueOrients = unique(currMouse(:,end-1:end));
     uniqueOrients = uniqueOrients(1:end-1);
+%     uniqueOrients = uniqueOrients(1:end-1);
     % loop for all orientation appearances
     for orInd = 1:length(uniqueOrients)
         % conditions for trial inclusion
@@ -55,6 +58,7 @@ for mouseInd = 1:NInd
     xticklabels(uniqueOrients)
     ylim([0 1])
     ylabel('Correct over 0.5')
+    ylabel('Correct')
     xlabel('Orientation appears')
     hold on
     yyaxis right
@@ -83,6 +87,7 @@ for mouseInd = 1:NInd
         
         
         nTrialsCorrOr(orInd) = (length(orientTrialInd)*nTrialsOr(orInd))/nTrialsOr(orInd);
+        nTrialsCorrOr(orInd) = (length(orientTrialInd));
         
         
     end
@@ -99,6 +104,7 @@ for mouseInd = 1:NInd
     hold on
     yyaxis right
     ylabel('Percent of trials particulat orient is awarded')
+    ylabel('N Trials')
     bar( 1.125:length(nTrialsCorrOr)+0.125,nTrialsCorrOr,0.25)
     
      if miceTogether == 0
