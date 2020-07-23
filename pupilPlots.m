@@ -5,10 +5,11 @@ load wheel_M222_20-Jul-2020_151547 RT contrastR contrastL correct orientationL o
 
 %% put variables together in one matrix
 dlcDat = cat(3,pupSizeTrials, licksTrials, eyeCentreTrialsX, eyeCentreTrialsY, stimOnTrials,licksReward,pupSizeReward);
-varOrder = {'pupSizeTrials','licksTrials', 'eyeCentreTrialsX', 'eyeCentreTrialsY', 'stimOnTrials','licksReward','pupSizeReward'}
+varOrder = {'pupil Size','licks', 'eye pos X', 'eye pos Y', 'stim On','licks Reward aligned','pupil Size Reward aligned'}
 
 dlcDat = dlcDat(~blinkTrial,:,:);
 correct = correct(~blinkTrial);
+rewardMs = rewardMs(~blinkTrial);
 
 correctDlcDat= dlcDat(correct,:,:);
 incorrectDlcDat = dlcDat(~correct,:,:);
@@ -50,5 +51,29 @@ for a = 1:size(dlcDat,3)
     
 end
 sgtitle('Correct trials L - Incorrect trials R')
+
+%% Split by reward size
+unRewSiz = unique(rewardMs);
+unRewSiz = unRewSiz(3:end);
+for a = 1:length(unRewSiz)
+    
+    tempDat = dlcDat( rewardMs == unRewSiz(a) & correct,:,:);
+    nRewTrials(a) = size(tempDat,1);
+    
+    % Means
+    figure(3)
+    for aa = 1:size(tempDat,3)
+        
+        subplot(size(tempDat,3),1,aa)
+        plot(mean(tempDat(:,:,aa),1),'Color',[a/length(unRewSiz) 0 a/length(unRewSiz) ]);
+        title(varOrder{aa})
+        hold on; xline(base,'m','LineWidth',2)
+        xticks([base:60:base+post]); xticklabels([base:60:base+post]/60-1)
+        
+    end
+    
+end
+
+
 
 

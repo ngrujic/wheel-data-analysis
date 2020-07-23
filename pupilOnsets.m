@@ -2,13 +2,13 @@
 clear all; close all
 
 M = csvread('222-07202020143735.csv',3,0);
-
+M = [Ml csvread('222-07202020143735.csv',3,0);
 load wheel_M222_20-Jul-2020_151547.mat RT
 onsets = load('222-07202020.txt');
 
 %% parameters
 recFs = 60;
-base = 1*recFs;
+base = 0.15*recFs;
 post = 2*recFs;
 RTframes = round(RT*recFs);
 %% eyes x and y positions and  EYE centre
