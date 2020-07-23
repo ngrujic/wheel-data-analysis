@@ -1,6 +1,6 @@
 clear all; close all
 % dates: from - to
-startDate = datenum('06-Jun-2020');
+startDate = datenum('09062020');
 currentDate = now;
 allDates = startDate:currentDate;
 

@@ -1,16 +1,49 @@
-
 clear all; close all
 
-M = csvread('222-07202020143735.csv',3,0);
-M = [Ml csvread('222-07202020143735.csv',3,0);
-load wheel_M222_20-Jul-2020_151547.mat RT
-onsets = load('222-07202020.txt');
-
-%% parameters
+% parameters
 recFs = 60;
 base = 0.15*recFs;
 post = 2*recFs;
+blinkLikelihoodThresh = 0.88;
+
+% input desired dates to put together in format DDMMYY
+startDate = datenum('200720','ddmmyy');
+endDate = datenum('210720','ddmmyy');
+dates = startDate:endDate;
+
+M = []; onsets = [];RT = [];contrastR = [];contrastL = [];correct = [];orientationL = [];orientationR = [];rewardMs = [];
+recFramesLength = [0];
+for a = 1:length(dates)
+    % training day
+    trainMatDate = datestr(dates(a),'dd-mmm-yyyy');
+    csvDate =  datestr(dates(a), 'mmddyyyy');
+    
+    % actually read from correct files
+    % read the csv file
+    csvFile = dir(['*' csvDate '*.csv']);
+    M = [M; csvread(csvFile.name,3,0)];
+    recFramesLength(a+1) = length(M);
+    
+    % load mat file for the training day output
+    matFile = dir(['wheel*' trainMatDate '*.mat']);
+    testy(a) = load(matFile.name, 'RT', 'contrastR', 'contrastL', 'correct', 'orientationL', 'orientationR', 'rewardMs')
+            RT = [RT  testy(a).RT];
+            contrastR = [contrastR  testy(a).contrastR];
+            contrastL = [contrastL  testy(a).contrastL];
+            correct = [correct  testy(a).correct];
+            orientationL = [orientationL  testy(a).orientationL];
+            orientationR = [orientationR testy(a).orientationR];
+            rewardMs = [rewardMs testy(a).rewardMs];
+
+% load Peters .txt onsets file
+txtFile = dir(['*' csvDate '*txt']);
+onsets = [onsets load(txtFile.name)+recFramesLength(a) ];
+
+end
+
+% convert reaction times to frame time
 RTframes = round(RT*recFs);
+
 %% eyes x and y positions and  EYE centre
 
 for eyes = 0:7
@@ -57,31 +90,37 @@ for onId = 1:length(onsets)
     
     % find bad trials
     eyeLikeliTrials(onId,:) = eyesLikelihood(onsets(onId)-base:onsets(onId)+post);
-    blinkTrial(onId,:) = min(eyeLikeliTrials(onId,:)) < 0.88;
+    blinkTrial(onId,:) = min(eyeLikeliTrials(onId,:)) < blinkLikelihoodThresh;
     
     % arrange variables by onset time
-    pupSizeTrials(onId,:) = pupilSize(onsets(onId)-base:onsets(onId)+post) - mean(pupilSize(onsets(onId)-base:onsets(onId)));
+    pupSizeTrials(onId,:) = pupilSize(onsets(onId)-base:onsets(onId)+post)...
+        - mean(pupilSize(onsets(onId)-base:onsets(onId)));
     
     licksTrials(onId,:) = licks(onsets(onId)-base:onsets(onId)+post);
-
+    
     eyeCentreTrialsX(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,1) - mean(zEyeCentre(onsets(onId)-base:onsets(onId),1));
     eyeCentreTrialsY(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,2) - mean(zEyeCentre(onsets(onId)-base:onsets(onId),2));
-
+    
     stimOnTrials(onId,:) = stimOn(onsets(onId)-base:onsets(onId)+post);
-
-    % arrange variables by reward time + RT 
+    
+    % arrange variables by reward time + RT
     licksReward(onId,:) = licks(onsets(onId) +30 +RTframes(onId) -base : onsets(onId) +30 +RTframes(onId) +post);
     pupSizeReward(onId,:) = pupilSize(onsets(onId) +30 +RTframes(onId) -base : onsets(onId) +30 +RTframes(onId) +post)...
         - mean(pupilSize(onsets(onId)-base:onsets(onId)));
-
+    
 end
 
+% removing blink trials for trial variables
+correct = logical(correct(~blinkTrial));
+rewardMs = rewardMs(~blinkTrial);
+contrastR = contrastR(~blinkTrial);
+contrastL = contrastL(~blinkTrial);
+orientationR = orientationR(~blinkTrial);
+orientationL = orientationL(~blinkTrial);
+RT = TR(~blinkTrial);
 
-
-
-
-save('trialDLCdat_07202020','pupSizeTrials','licksTrials','eyeCentreTrialsX','eyeCentreTrialsY','stimOnTrials','licksReward','pupSizeReward'...
-    ,'base','post','blinkTrial');
+save(['DLCdat_',trainMatDate ],'pupSizeTrials','licksTrials','eyeCentreTrialsX','eyeCentreTrialsY','stimOnTrials','licksReward','pupSizeReward'...
+    ,'base','post','blinkTrial',  'RT',  'contrastR', 'contrastL', 'correct' ,'orientationL' ,'orientationR', 'rewardMs');
 
 
 
