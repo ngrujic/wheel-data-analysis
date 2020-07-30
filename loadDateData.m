@@ -1,11 +1,11 @@
 clear all; close all
 % dates: from - to
-startDate = datenum('09062020');
+startDate = datenum('07072020','ddmmyyyy');
 currentDate = now;
 allDates = startDate:currentDate;
 
 % list the mice?
-mice = [144 145 136 142 ];
+mice = {'155','160','192','222','123','136','159','160b','161','144','145','142' };
 
 % mouse data location
 mDataFolder = 'P:\Nik\Wheel setup\WheelData\' ;
@@ -16,10 +16,10 @@ mouseMat=[];
 for mousInd = 1:length(mice)
     % initialise outer loop flags and variables
     mouseData= [];
-    i=0;
+    iiii=0;
 
     % cd into mouse folder
-    cd([mDataFolder, 'M', num2str(mice(mousInd))])
+    cd([mDataFolder, 'M', mice{mousInd}])
     
     for dayInd = 1:length(allDates)
         
@@ -30,21 +30,30 @@ for mousInd = 1:length(mice)
             % find exp day
             dayExp(dayInd) = dir(['wheel*',tempDate,'*.mat']);
             load(dayExp(dayInd).name)
-            
+%             keyboard
             % FILTERING THE DAY - eg if >60% total include in the analysis
-            if perccorr >= 55
-                i= i+1;
-                mouseData = [ mouseData; [repmat(i,length(correct),1), double(correct)' RT' correctResponse(1:length(correct))' repmat(repeatIncorrect,length(correct),1) trialRepeated(1:length(correct))'...
-                    recentPercent'  orientationL(1:length(correct))' orientationR(1:length(correct))']];
+%             if perccorr >= 55
+                iiii= iiii+1
+                mouseData = [ mouseData; ...
+                    [repmat(iiii,length(correct),1),...
+                    double(correct)' ...
+                    RT' ...
+                    correctResponse(1:length(correct))' ...
+                    repmat(repeatIncorrect,length(correct),1)...
+                    trialRepeated(1:length(correct))'...
+                    response(1:length(correct))' ...
+                    orientationL(1:length(correct))'...
+                    orientationR(1:length(correct))']];
+                    
                 
-            end
+%             end
         end
         
     end
     
     % saving in big cell and normal array mouseMat is everything combined
     allMiceData{mousInd,1} = mouseData;
-    allMiceData{mousInd,2} = num2str(mice(mousInd));
+    allMiceData{mousInd,2} = mice{mousInd};
     allMiceData{mousInd,3} = dayExp;
 
     mouseMat = [mouseMat; mouseData];
