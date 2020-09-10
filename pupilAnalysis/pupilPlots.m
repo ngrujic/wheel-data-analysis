@@ -22,7 +22,7 @@ for a = 1:size(dlcDat,3)
     figure(1)
     subplot(size(dlcDat,3),1,a)
     
-    
+     
     shadedErrorBar(1:size(correctDlcDat,2),mean(dlcDat(correct,:,a),1),2*(std(dlcDat(correct,:,a),[],1)/sqrt(size(correctDlcDat,1))),'lineProps','b')
     hold on
     shadedErrorBar(1:size(incorrectDlcDat,2),mean(dlcDat(~correct,:,a),1),2*(std(dlcDat(~correct,:,a)/sqrt(size(incorrectDlcDat,1)),[],1)),'lineProps','r')
