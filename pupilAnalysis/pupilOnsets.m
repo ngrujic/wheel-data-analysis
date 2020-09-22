@@ -8,13 +8,22 @@ post = 2*recFs;
 blinkLikelihoodThresh = 0.88;
 
 % input desired dates to put together in format DDMMYY
-dayz = uigetfile('*.csv','MultiSelect','on');
+dayz = (uigetfile('*.csv','MultiSelect','on'));
+if iscell(dayz)
+    nRecs = length(dayz);
+    else
+        nRecs =1;
+end
 
 M = []; onsets = [];RT = [];contrastR = [];contrastL = [];correct = [];orientationL = [];orientationR = [];rewardMs = [];
 recFramesLength = [0];
 for a = 1:length(dayz)
-    % training day
+    % if one or more
+    if iscell(dayz)
     csvfile = cell2mat(dayz(a));
+    else
+        csvfile =dayz;
+    end
     
     trainMatDate = datenum(csvfile(5:12), 'mmddyyyy');
     trainMatText = datestr(trainMatDate,'dd-mmm-yyyy');
@@ -22,8 +31,7 @@ for a = 1:length(dayz)
     
     % actually read from correct files
     % read the csv file
-    csvFile = dir(['*' csvDate '*.csv']);
-    M = [M; csvread(csvFile.name,3,0)];
+    M = [M; csvread(csvfile,3,0)];
     recFramesLength(a+1) = length(M);
     
     % load mat file for the training day output
@@ -41,6 +49,9 @@ for a = 1:length(dayz)
 txtFile = dir(['*' csvDate '*txt']);
 onsets = [onsets load(txtFile.name)+recFramesLength(a) ];
 
+length(testy(a).correct)
+length(load(txtFile.name))
+% keyboard
 end
 
 % convert reaction times to frame time
