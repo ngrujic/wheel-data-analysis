@@ -1,20 +1,21 @@
- clearvars -except allMiceData mouseMat
+close all; clearvars -except allMiceData mouseMat
 filteredDat = mouseMat;
-figure
-list = {'123' '222' '192' '155' '160' '144' '145' '136' '142' '159' '160b' '161'};
+
+list = {'155','160','192','222','123','136','159','160b','161','144','145','142' };
 for a = 1:length(list)
     turnL =[];
     oneMouse = allMiceData{a, 1}  ;
 %     oneMouse = oneMouse(oneMouse(:,8)==0);
     
-    subplot(3,4,a)
+    figure(a)
     
-    orDiff = abs(oneMouse(:,7)) - abs(oneMouse(:,8));
+    orDiff = abs(oneMouse(:,8)) - abs(oneMouse(:,9));
    unordif = unique(orDiff);
    
    %% weird -10 trials
    oneMouse(abs(orDiff)==10,:) = [];
    orDiff(abs(orDiff)==10,:) = [];
+   
       unordif = unique(orDiff)
 
     for aa = 1: length(unordif)
@@ -22,9 +23,9 @@ for a = 1:length(list)
         diffInd = find(orDiff == unordif(aa));
        
         
-        turnL(aa) = length(find(oneMouse(diffInd,9) == -1))/length(oneMouse(diffInd,9));
+        turnL(aa) = length(find(oneMouse(diffInd,7) == -1))/length(oneMouse(diffInd,7));
         
-        oneMouse(diffInd,6);
+        oneMouse(diffInd,7);
         
         
     end

@@ -10,7 +10,7 @@ varOrder = {'pupil Size','licks','pupil Size Reward aligned','licks Reward align
 
 % remove blink trials from dlc data
 dlcDat = dlcDat(~blinkTrial,:,:);
-
+correct = logical(correct);
 %% plot after splitting into correct, incorrect
 correctDlcDat= dlcDat(correct,:,:);
 incorrectDlcDat = dlcDat(~correct,:,:);
@@ -21,12 +21,17 @@ for a = 1:size(dlcDat,3)
     % Means
     figure(1)
     subplot(size(dlcDat,3),1,a)
-    plot(mean(dlcDat(correct,:,a),1),'b')
+    
+     
+    shadedErrorBar(1:size(correctDlcDat,2),mean(dlcDat(correct,:,a),1),2*(std(dlcDat(correct,:,a),[],1)/sqrt(size(correctDlcDat,1))),'lineProps','b')
     hold on
-    plot(mean(dlcDat(~correct,:,a),1),'r')
+    shadedErrorBar(1:size(incorrectDlcDat,2),mean(dlcDat(~correct,:,a),1),2*(std(dlcDat(~correct,:,a)/sqrt(size(incorrectDlcDat,1)),[],1)),'lineProps','r')
     title(varOrder{a})
     hold on; xline(base,'m','LineWidth',2)
     xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
+    sgtitle('Split by correct(blue) - incorrect(red)')
+    hold on
+    
     
     % correct imagesc
     tempDat = dlcDat(correct,:,a); % for caxis percentile
@@ -85,13 +90,13 @@ for a = 1:length(unRewSiz)
     
     tempDat = dlcDat( totalContrast == unRewSiz(a) & correct,:,:);
     nRewTrials(a) = size(tempDat,1);
-    
+    i=0
     % Means
     figure(5)
-    for aa = 1:size(tempDat,3)
-        
-        subplot(size(tempDat,3),1,aa)
-        plot(mean(tempDat(:,:,aa),1),'Color',[a/length(unRewSiz) 0 0 ]);
+    for aa = 1:2:3
+              i= i+1;
+        subplot(2,1,i)
+        plot(mean(tempDat(:,:,aa),1),'Color',[1-a*(1/length(unRewSiz)) 1-a*(1/length(unRewSiz)) 1-a*(1/length(unRewSiz)) ]);
         title(varOrder{aa})
         hold on; xline(base,'m','LineWidth',2)
         xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
@@ -101,6 +106,40 @@ for a = 1:length(unRewSiz)
     
 end
 sgtitle('Split by R - L contrast')
+
+%% Split by RIGHT SIDE contrast
+
+totalContrast = contrastR;
+unRewSiz = unique(totalContrast);
+unRewSiz = unRewSiz(1:end);
+
+for a = 1:length(unRewSiz)
+    
+    tempDat = dlcDat( totalContrast == unRewSiz(a) & correct,:,:);
+    nRewTrials(a) = size(tempDat,1);
+    i=0
+
+    % Means
+    figure(6)
+    for aa = 1:2:3
+        i= i+1;
+        subplot(2,1,i)
+        
+        
+%     shadedErrorBar(1:size(tempDat,2),mean(tempDat(:,:,aa),1),2*(std(tempDat(:,:,aa),[],1)/sqrt(size(tempDat,1))),'lineProps','b','patchSaturation',a*0.1)
+%     hold on
+   
+        
+        
+        plot(mean(tempDat(:,:,aa),1),'Color',[1-a*0.33 1-a*0.33 1-a*0.33]);
+        title(varOrder{aa})
+        hold on; xline(base,'m','LineWidth',2)
+        xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
+        
+    end
+    
+end
+sgtitle('Split by R contrast')
 
 
 
