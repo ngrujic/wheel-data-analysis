@@ -43,7 +43,9 @@ for dayInd = 1:length(dayCell)
         dayExp(i2).date = matDate;
         dayExp(i2).expData = [onsetsDat',correct',angleDiff',RT'];
         dayExp(i2).dlcData = [eyeCentre pupilSize licks eyesLikelihood ];
-        dayExp(i2).dataInfo = 'expData columns: onsetFrame, correct, angleDifference, RT; dlcData columns: 1,2= eyeposition x,y ,3= pupil size, 4 =lick, eye likelihood onwards';
+        dayExp(i2).expDatInfo = 'expData columns: onsetFrame, correct, angleDifference, RT';
+        dayExp(i2).dlcDatInfo = ' dlcData columns: 1,2= eyeposition x,y ,3= pupil size, 4 =lick, eye likelihood onwards';
+
         % if there is a mismatch of onsets or something then assign day to badDays
     catch
         fprintf(['\n' matDate ' is not good'])
