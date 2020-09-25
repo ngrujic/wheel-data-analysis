@@ -1,15 +1,15 @@
-close all; clearvars -except allMiceData mouseMat
+ clearvars -except allMiceData mouseMat
 filteredDat = mouseMat;
-
-list = {'155' '160' '192' '123' '222' '137' '159' '160b' '161' '144' '136' '145' '142' };
-for a = 1:length(unique(filteredDat(:,1)))
+figure
+list = {'123' '222' '192' '155' '160' '144' '145' '136' '142' '159' '160b' '161'};
+for a = 1:length(list)
     turnL =[];
     oneMouse = allMiceData{a, 1}  ;
 %     oneMouse = oneMouse(oneMouse(:,8)==0);
     
-    figure(a)
+    subplot(3,4,a)
     
-    orDiff = abs(oneMouse(:,11)) - abs(oneMouse(:,12));
+    orDiff = abs(oneMouse(:,7)) - abs(oneMouse(:,8));
    unordif = unique(orDiff);
    
    %% weird -10 trials
@@ -22,7 +22,7 @@ for a = 1:length(unique(filteredDat(:,1)))
         diffInd = find(orDiff == unordif(aa));
        
         
-        turnL(aa) = length(find(oneMouse(diffInd,6) == -1))/length(oneMouse(diffInd,6));
+        turnL(aa) = length(find(oneMouse(diffInd,9) == -1))/length(oneMouse(diffInd,9));
         
         oneMouse(diffInd,6);
         
@@ -35,7 +35,7 @@ for a = 1:length(unique(filteredDat(:,1)))
     xticklabels(unordif)
     yline(0.5)
     xline(round(length(unordif)/2))
-    title([list{a},' perc correct = ' num2str(100*mean(oneMouse(:,3)))])
+    title([list{a},' perc correct = ' num2str(100*mean(oneMouse(:,2)))])
     
     ylabel('proportion L')
     xlabel('L-R angle')

@@ -7,7 +7,7 @@ post = 2*recFs;
 blinkLikelihoodThresh = 0.88;
 
 % input desired dates to put together in format DDMMYY
-startDate = datenum('200720','ddmmyy');
+startDate = datenum('210720','ddmmyy');
 endDate = datenum('210720','ddmmyy');
 dates = startDate:endDate;
 
@@ -93,13 +93,13 @@ for onId = 1:length(onsets)
     blinkTrial(onId,:) = min(eyeLikeliTrials(onId,:)) < blinkLikelihoodThresh;
     
     % arrange variables by onset time
-    pupSizeTrials(onId,:) = pupilSize(onsets(onId)-base:onsets(onId)+post)...
-        - mean(pupilSize(onsets(onId)-base:onsets(onId)));
+    pupSizeTrials(onId,:) = pupilSize(onsets(onId)-base:onsets(onId)+post);%...
+       % - mean(pupilSize(onsets(onId)-base:onsets(onId)));
     
     licksTrials(onId,:) = licks(onsets(onId)-base:onsets(onId)+post);
     
-    eyeCentreTrialsX(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,1) - mean(zEyeCentre(onsets(onId)-base:onsets(onId),1));
-    eyeCentreTrialsY(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,2) - mean(zEyeCentre(onsets(onId)-base:onsets(onId),2));
+    eyeCentreTrialsX(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,1);% - mean(zEyeCentre(onsets(onId)-base:onsets(onId),1));
+    eyeCentreTrialsY(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,2);% - mean(zEyeCentre(onsets(onId)-base:onsets(onId),2));
     
     stimOnTrials(onId,:) = stimOn(onsets(onId)-base:onsets(onId)+post);
     
@@ -117,7 +117,7 @@ contrastR = contrastR(~blinkTrial);
 contrastL = contrastL(~blinkTrial);
 orientationR = orientationR(~blinkTrial);
 orientationL = orientationL(~blinkTrial);
-RT = TR(~blinkTrial);
+RT = RT(~blinkTrial);
 
 save(['DLCdat_',trainMatDate ],'pupSizeTrials','licksTrials','eyeCentreTrialsX','eyeCentreTrialsY','stimOnTrials','licksReward','pupSizeReward'...
     ,'base','post','blinkTrial',  'RT',  'contrastR', 'contrastL', 'correct' ,'orientationL' ,'orientationR', 'rewardMs');
