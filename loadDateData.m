@@ -1,11 +1,11 @@
 clear all; close all
 % dates: from - to
-startDate = datenum('07072020','ddmmyyyy');
-currentDate = now;
+startDate = datenum('21092020','ddmmyyyy');
+currentDate = datenum('26092020','ddmmyyyy');
 allDates = startDate:currentDate;
 
 % list the mice?
-mice = {'155','160','192','222','123','136','159','160b','161','144','145','142' };
+mice = {'155','160','222','136','159','160b','161','144','145' };
 
 % mouse data location
 mDataFolder = 'P:\Nik\Wheel setup\WheelData\' ;

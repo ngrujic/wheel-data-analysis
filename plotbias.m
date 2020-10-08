@@ -1,7 +1,7 @@
 close all; clearvars -except allMiceData mouseMat
 filteredDat = mouseMat;
 
-list = {'155','160','192','222','123','136','159','160b','161','144','145','142' };
+list = {'155','160','222','136','159','160b','161','144','145'};
 for a = 1:length(list)
     turnL =[];
     oneMouse = allMiceData{a, 1}  ;
