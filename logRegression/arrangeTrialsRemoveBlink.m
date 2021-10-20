@@ -8,9 +8,9 @@ post = 3*recFs;
 blinkLikelihoodThresh = 0.5;
 
 % load previously gotten eye data
-load extractedData.mat;
+load(uigetfile);
 
-
+align_to_rew =0;
 %% Arrange into trials and re-save
 
 % loop over days
@@ -20,10 +20,13 @@ for dayInd = 1:length(dayExp)
     dayDLC = dayExp(dayInd).dlcData;
     expDat = dayExp(dayInd).expData;
     
+    if ~align_to_rew
     onsets = expDat(:,1);
-    
+    else
+    onsets = expDat(:,1)+30+expDat(:,4)*60;    
+    end
     % loop over onsets to extract each trial
-    goodTrialInd = 0; blinkTrials = [];dlcData = [];pupilSize = []; xPos = []; yPos = []; lick = [];
+    goodTrialInd = 0; blinkTrials = [];dlcData = [];pupilSize = []; xPos = []; yPos = []; lick = []; 
     for onInd = 1:length(onsets)
         currentOnset = onsets(onInd);
         
@@ -37,6 +40,7 @@ for dayInd = 1:length(dayExp)
             xPos(goodTrialInd,:) = dayDLC(currentOnset - base:currentOnset + post,1);
             yPos(goodTrialInd,:) = dayDLC(currentOnset - base:currentOnset + post,2);
             lick(goodTrialInd,:) = dayDLC(currentOnset - base:currentOnset + post,4);
+
         else    
             blinkTrials = [blinkTrials onInd];
         end
@@ -50,8 +54,13 @@ for dayInd = 1:length(dayExp)
     dayExp(dayInd).dlcData = [];
     dayExp(dayInd).expData = expDat;
     dayExp(dayInd).dlcData = dlcData;
-    dayExp(dayInd).datainfo = 'expData columns: onsetFrame, correct, angleDifference, RT';
+    dayExp(dayInd).datainfo = 'expData columns: onsetFrame, correct, angleDifference, RT, contrast and rew size';
     
 end
 
-save('dataTrials.mat','dayExp','base','post','blinkLikelihoodThresh')
+if align_to_rew
+save([num2str(222),'_dataTrialsReward.mat'],'dayExp','base','post','blinkLikelihoodThresh')
+else
+    save([num2str(222),'_dataTrials.mat'],'dayExp','base','post','blinkLikelihoodThresh')
+
+end

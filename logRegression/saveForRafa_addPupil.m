@@ -89,7 +89,7 @@ for mouse_ind = 1:length(mouse_folders)
     end
     
 end
-% 
+% s
 % % remove all RT > 6 sec
 % trialsToDelete = [];
 % for trial = 1:length(Correct)
@@ -101,7 +101,7 @@ end
 
 cd ..
 AllMouseData = table(Correct, CorrectResponse, Response, OrientLeft, OrientRight, ContrastLeft, ContrastRight, RepeatOn, TrialRepeated, ReactionTime, Date, MouseNr);
-% AllMouseData(trialsToDelete,:) = [];
+AllMouseData(trialsToDelete,:) = [];
 writetable(AllMouseData)
 
 %clearvars -except Correct CorrectResponse Response OrientLeft OrientRight RepeatOn TrialRepeated ReactionTime FileName mouse_files data_path file_ind

@@ -14,48 +14,50 @@ correct = logical(correct);
 %% plot after splitting into correct, incorrect
 correctDlcDat= dlcDat(correct,:,:);
 incorrectDlcDat = dlcDat(~correct,:,:);
-
+alignment = {'Seconds from stim onset','Seconds from reward delivery'};
+close all
 i =0;
-for a = 1:size(dlcDat,3)
+for a = [2 4]%3:size(dlcDat,3)
     
     % Means
     figure(1)
-    subplot(size(dlcDat,3),1,a)
+    subplot(1,2,i+1)
     
+i = i+1
      
-    shadedErrorBar(1:size(correctDlcDat,2),mean(dlcDat(correct,:,a),1),2*(std(dlcDat(correct,:,a),[],1)/sqrt(size(correctDlcDat,1))),'lineProps','b')
+    shadedErrorBar(1:size(correctDlcDat,2),mean(dlcDat(correct,:,a),1),2*(std(dlcDat(correct,:,a),[],1)/sqrt(size(correctDlcDat,1))),'patchSaturation',0.8)
     hold on
-    shadedErrorBar(1:size(incorrectDlcDat,2),mean(dlcDat(~correct,:,a),1),2*(std(dlcDat(~correct,:,a)/sqrt(size(incorrectDlcDat,1)),[],1)),'lineProps','r')
-    title(varOrder{a})
-    hold on; xline(base,'m','LineWidth',2)
+    shadedErrorBar(1:size(incorrectDlcDat,2),mean(dlcDat(~correct,:,a),1),2*(std(dlcDat(~correct,:,a)/sqrt(size(incorrectDlcDat,1)),[],1)),'patchSaturation',0.3)
+    
+    hold on; xline(base,'k','LineWidth',1); hold on;  xline(base+30,'k','LineWidth',1)
     xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
-    sgtitle('Split by correct(blue) - incorrect(red)')
+%     sgtitle('Split by correct(blue) - incorrect(red)')
     hold on
-    
-    
+    xlabel(alignment{i})
+    ylabel('Licking')
     % correct imagesc
-    tempDat = dlcDat(correct,:,a); % for caxis percentile
-    i = i+1;
-    figure(2)
-    subplot(size(dlcDat,3),2,i)
-    imagesc(dlcDat(correct,:,a))
-    title(varOrder{a})
-    hold on; xline(base,'m','LineWidth',2)
-    caxis([prctile(tempDat(:),10) prctile(tempDat(:),90)])
-    xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
-    
-    % incorrect imagesc
-    
-    i = i+1;
-    subplot(size(dlcDat,3),2,i)
-    imagesc(dlcDat(~correct,:,a))
-    caxis([prctile(tempDat(:),25) prctile(tempDat(:),75)])
-    title(varOrder{a})
-    hold on; xline(base,'m','LineWidth',2)
-    xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
+%     tempDat = dlcDat(correct,:,a); % for caxis percentile
+%     i = i+1;
+%     figure(2)
+%     subplot(size(dlcDat,3),2,i)
+%     imagesc(dlcDat(correct,:,a))
+%     title(varOrder{a})
+%     hold on; xline(base,'m','LineWidth',2)
+%     caxis([prctile(tempDat(:),10) prctile(tempDat(:),90)])
+%     xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
+%     
+%     % incorrect imagesc
+%     
+%     i = i+1;
+%     subplot(size(dlcDat,3),2,i)
+%     imagesc(dlcDat(~correct,:,a))
+%     caxis([prctile(tempDat(:),25) prctile(tempDat(:),75)])
+%     title(varOrder{a})
+%     hold on; xline(base,'m','LineWidth',2)
+%     xticks([base:60:base+post]); xticklabels([0:60:base+post]/60)
     
 end
-sgtitle('Correct trials L - Incorrect trials R')
+% sgtitle('Correct trials L - Incorrect trials R')
 
 %% Split by reward size
 unRewSiz = unique(rewardMs);

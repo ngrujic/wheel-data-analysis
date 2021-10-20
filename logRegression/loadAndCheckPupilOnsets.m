@@ -8,7 +8,7 @@ for dayInd = 1:length(dayCell)
     
     % convert dates etc to match up files
     currDay = dayCell{dayInd};
-    dayDate = datenum(currDay(end-11:end-4),'mmddyyyy');
+    dayDate = datenum(currDay(5:12),'mmddyyyy');
     matDate = datestr(dayDate,'dd-mmm-yyyy');
     txtDate = datestr(dayDate,'mmddyyyy');
     csvDate = txtDate;
@@ -18,7 +18,16 @@ for dayInd = 1:length(dayCell)
     onsetsDat = load(txtFile.name);
     
     matFile = dir(['*' matDate '*.mat']);
-    load(matFile.name,'correct','RT','ITI','angleDiff');
+    
+    load(matFile.name,'correct','RT','ITI','angleDiff','contrastR','contrastL','rewardMs');
+    test = rewardMs;
+    % correct reward sizes
+    unRew = unique(rewardMs);
+    for a = 1:length(unRew)
+       rewardMs(rewardMs == unRew(a)) = a; 
+    end
+% % %     test = [test ;rewardMs];
+% % %     keyboard
     
     csvFile = dir(['*',csvDate,'*.csv']);
     
@@ -41,9 +50,9 @@ for dayInd = 1:length(dayCell)
         csvDat = csvread(csvFile.name,3);
         [eyeCentre, pupilSize,eyesLikelihood,licks] = getPupilSizePositionCSV(csvDat);
         dayExp(i2).date = matDate;
-        dayExp(i2).expData = [onsetsDat',correct',angleDiff',RT'];
+        dayExp(i2).expData = [onsetsDat',correct',angleDiff',RT',(contrastL+contrastR)', rewardMs'];
         dayExp(i2).dlcData = [eyeCentre pupilSize licks eyesLikelihood ];
-        dayExp(i2).expDatInfo = 'expData columns: onsetFrame, correct, angleDifference, RT';
+        dayExp(i2).expDatInfo = 'expData columns: onsetFrame, correct, angleDifference, RT, sum contrast, rewardMs';
         dayExp(i2).dlcDatInfo = ' dlcData columns: 1,2= eyeposition x,y ,3= pupil size, 4 =lick, eye likelihood onwards';
 
         % if there is a mismatch of onsets or something then assign day to badDays

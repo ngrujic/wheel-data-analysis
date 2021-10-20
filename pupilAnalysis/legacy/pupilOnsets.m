@@ -11,8 +11,8 @@ blinkLikelihoodThresh = 0.88;
 dayz = (uigetfile('*.csv','MultiSelect','on'));
 if iscell(dayz)
     nRecs = length(dayz);
-    else
-        nRecs =1;
+else
+    nRecs =1;
 end
 
 M = []; onsets = [];RT = [];contrastR = [];contrastL = [];correct = [];orientationL = [];orientationR = [];rewardMs = [];
@@ -20,14 +20,23 @@ recFramesLength = [0];
 for a = 1:length(dayz)
     % if one or more
     if iscell(dayz)
-    csvfile = cell2mat(dayz(a));
+        csvfile = cell2mat(dayz(a));
     else
         csvfile =dayz;
     end
     
     trainMatDate = datenum(csvfile(5:12), 'mmddyyyy');
     trainMatText = datestr(trainMatDate,'dd-mmm-yyyy');
-    csvDate = csvfile(5:12); 
+    csvDate = csvfile(5:12);
+    % load Peters .txt onsets file
+    txtFile = dir(['*' csvDate '*txt']);
+    thresholdedVals = load(txtFile(3).name);
+    
+    
+    
+    
+    [xxx,onsetsDat] = getanalogsignalonsets_pupil(thresholdedVals,0.5,60,betweenOnsetsFrame,0,0,0);
+    onsets = [onsets load(txtFile.name)+recFramesLength(a) ];
     
     % actually read from correct files
     % read the csv file
@@ -37,21 +46,20 @@ for a = 1:length(dayz)
     % load mat file for the training day output
     matFile = dir(['wheel*' trainMatText '*.mat']);
     testy(a) = load(matFile.name, 'RT', 'contrastR', 'contrastL', 'correct', 'orientationL', 'orientationR', 'rewardMs')
-            RT = [RT  testy(a).RT];
-            contrastR = [contrastR  testy(a).contrastR];
-            contrastL = [contrastL  testy(a).contrastL];
-            correct = [correct  testy(a).correct];
-            orientationL = [orientationL  testy(a).orientationL];
-            orientationR = [orientationR testy(a).orientationR];
-            rewardMs = [rewardMs testy(a).rewardMs];
-
-% load Peters .txt onsets file
-txtFile = dir(['*' csvDate '*txt']);
-onsets = [onsets load(txtFile.name)+recFramesLength(a) ];
-
-length(testy(a).correct)
-length(load(txtFile.name))
-% keyboard
+    RT = [RT  testy(a).RT];
+    contrastR = [contrastR  testy(a).contrastR];
+    contrastL = [contrastL  testy(a).contrastL];
+    correct = [correct  testy(a).correct];
+    orientationL = [orientationL  testy(a).orientationL];
+    orientationR = [orientationR testy(a).orientationR];
+    rewardMs = [rewardMs testy(a).rewardMs];
+    
+    
+    betweenOnsetsFrame = RT + ITI(1:length(correct)) + 60;
+    
+    length(testy(a).correct)
+    length(load(txtFile.name))
+    % keyboard
 end
 
 % convert reaction times to frame time
@@ -107,7 +115,7 @@ for onId = 1:length(onsets)
     
     % arrange variables by onset time
     pupSizeTrials(onId,:) = pupilSize(onsets(onId)-base:onsets(onId)+post);%...
-        - mean(pupilSize(onsets(onId)-base:onsets(onId)));
+    - mean(pupilSize(onsets(onId)-base:onsets(onId)));
     
     licksTrials(onId,:) = licks(onsets(onId)-base:onsets(onId)+post);
     
@@ -115,11 +123,11 @@ for onId = 1:length(onsets)
     eyeCentreTrialsY(onId,:) = zEyeCentre(onsets(onId)-base:onsets(onId)+post,2); %- mean(zEyeCentre(onsets(onId)-normalizeBy:onsets(onId),2));
     
     stimOnTrials(onId,:) = stimOn(onsets(onId)-base:onsets(onId)+post);
-
+    
     % arrange variables by reward time + RT
     licksReward(onId,:) = licks(onsets(onId) +30 +RTframes(onId) -base : onsets(onId) +30 +RTframes(onId) +post);
     pupSizeReward(onId,:) = pupilSize(onsets(onId) +30 +RTframes(onId) -base : onsets(onId) +30 +RTframes(onId) +post);%...
-        - mean(pupilSize(onsets(onId)-base:onsets(onId)));
+    - mean(pupilSize(onsets(onId)-base:onsets(onId)));
     
 end
 
